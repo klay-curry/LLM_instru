@@ -1,0 +1,38 @@
+# ============================================================
+# Zero-shot multi-modal visual grounding configuration
+# Uses Qwen3-VL-8B-Instruct directly (no LoRA / no training)
+# ============================================================
+
+# ---- Paths ----
+paths:
+  queries_json: "/root/autodl-tmp/data/LLM_data/queries/queries.json"
+  image_root: "/root/autodl-tmp/data/LLM_data"
+  output_dir: "outputs"
+  output_json: "outputs/predictions.json"
+  output_log: "outputs/run.log"
+
+# ---- Model ----
+model:
+  name: "/root/autodl-fs/weights/Qwen3-VL-8B-Instruct"
+  torch_dtype: "bfloat16"
+  device_map: "cuda:0"
+  trust_remote_code: true
+
+# ---- Image preprocessing ----
+image:
+  size: 448
+  depth_clip_max_mm: 20000.0  # clip beyond this as invalid
+
+# ---- Generation ----
+generation:
+  max_new_tokens: 64
+  do_sample: false  # greedy decoding for reproducibility
+  num_beams: 1
+
+# ---- Inference ----
+inference:
+  limit: -1  # -1 means all queries; otherwise truncate for smoke test
+  start_index: 0  # skip first N queries (for resume / chunked run)
+  end_index: -1  # -1 = no end cap; otherwise only process first end_index queries
+  batch_size: 8  # batch size for inference (larger = more GPU utilization)
+  flush_every: 5  # write predictions.json to disk every N processed batches

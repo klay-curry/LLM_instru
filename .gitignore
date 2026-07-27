@@ -1,0 +1,32 @@
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local environments and tooling
+.venv/
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Datasets and generated splits
+data/splits/
+data/**/*.json
+
+# Experiment and inference outputs
+outputs/
+checkpoints/
+experiments/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.pkl
+*.zip
+*.log
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store

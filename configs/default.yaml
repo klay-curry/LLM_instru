@@ -1,0 +1,88 @@
+# ============================================================
+# Multi-modal Visual Grounding - Default Configuration
+# ============================================================
+
+# ---- Data ----
+data:
+  train_json_path: "data/train.json"
+  val_json_path: "data/val.json"
+  test_json_path: "data/test.json"
+  image_root: "data/images"
+  image_size: 448
+  modalities: ["visible", "infrared", "depth"]
+
+# ---- Preprocessing ----
+preprocessing:
+  depth:
+    clip_max: 20000  # mm, beyond this is invalid
+    normalize_to: [0, 1]
+  ir:
+    # IR is 3ch pseudo-color, use single channel
+    use_single_channel: true
+
+# ---- Model ----
+model:
+  # Visual Backbone
+  backbone:
+    name: "dinov2"  # "dinov2" or "swin"
+    variant: "base"  # "base" or "large"
+    pretrained: true
+    freeze: false  # whether to freeze backbone during Stage 2
+    # Feature pyramid output channels
+    fpn_channels: [256, 256, 256, 256]  # P2, P3, P4, P5
+  
+  # VLM Semantic Branch
+  vlm:
+    name: "Qwen/Qwen3-VL-7B-Instruct"  # or "Qwen/Qwen3-VL-2B-Instruct"
+    lora_rank: 16
+    lora_alpha: 32
+    lora_dropout: 0.05
+    lora_target_modules: ["q_proj", "k_proj", "v_proj", "o_proj"]
+    freeze_vision_encoder: true  # freeze ViT + Connector
+    freeze_llm_embedding: true
+    output_semantic_dim: 768  # dimension of semantic tokens extracted from VLM
+
+  # Cross-Attention Decoder
+  decoder:
+    num_layers: 6
+    nhead: 8
+    d_model: 256
+    dim_feedforward: 1024
+    dropout: 0.1
+    num_queries: 1  # single target per query
+
+# ---- Training ----
+training:
+  batch_size: 8
+  num_epochs: 30
+  gradient_accumulation_steps: 2
+  mixed_precision: "bf16"  # "bf16", "fp16", or "no"
+  
+  optimizer:
+    name: "adamw"
+    lr_backbone: 1e-5
+    lr_lora: 2e-4
+    lr_decoder: 1e-4
+    lr_vlm_fusion: 1e-4
+    weight_decay: 0.01
+    betas: [0.9, 0.999]
+  
+  scheduler:
+    name: "cosine"
+    warmup_ratio: 0.1
+  
+  loss:
+    giou_weight: 2.0
+    l1_weight: 1.0
+    coarse_weight: 0.5  # coarse bbox from VLM
+  
+  clip_grad_norm: 1.0
+  early_stopping_patience: 10
+  save_every: 1
+  eval_every: 1
+
+# ---- Inference ----
+inference:
+  batch_size: 16
+  image_size: 448
+  save_path: "outputs/predictions.json"

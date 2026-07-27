@@ -1,0 +1,24 @@
+# Core
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.21.0
+opencv-python>=5.0.0
+pillow>=9.0.0
+pyyaml>=6.0
+
+# Hugging Face
+transformers>=4.30.0
+accelerate>=0.20.0
+peft>=0.5.0  # LoRA
+bitsandbytes>=0.40.0  # Quantization
+flash-attn>=2.0.0  # Flash Attention 2
+
+# Data
+pandas>=1.4.0
+tqdm>=4.60.0
+
+# Evaluation
+scipy>=1.7.0
+
+# Visualization (optional)
+matplotlib>=3.5.0
