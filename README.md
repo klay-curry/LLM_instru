@@ -9,6 +9,12 @@
 
 基于强专门基座 + 推理侧置信度的多模态视觉定位项目；从通用 VLM 零样本 **0.43** 起步，最终达到复赛平台分 **0.708**（提升 65%）。所有数字均来自本项目实际训练与平台实测。
 
+## 数据样例
+
+![三模态样本](docs/figures/tri_official.png)
+
+*官方测试集样本（#000002_001 / #000002_003）：左列 RGB / 中列热红外（IR）/ 右列深度（Depth，紫=远/黄=近）。红框 = Rex-Omni 在 RGB 上的预测，黄框 = 同位置投影到 IR/Depth。Query 如 `"A man in a checkered shirt beside the white street lamp"`、`"Red promotional sign with food imagery"`——典型的"外观 + 位置"组合指代。*
+
 ---
 
 ## 一句话
